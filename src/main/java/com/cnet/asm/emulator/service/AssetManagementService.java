@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.cnet.asm.emulator.entity.Device;
 import com.cnet.asm.emulator.entity.PDURequest;
@@ -17,6 +18,7 @@ import com.cnet.asm.emulator.repository.DeviceRepository;
 import com.cnet.asm.emulator.repository.PDURepository;
 
 
+@Component
 public class AssetManagementService {
 	
 	@Autowired
