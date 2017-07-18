@@ -16,6 +16,7 @@ import com.cnet.asm.emulator.entity.PDURequest;
 import com.cnet.asm.emulator.model.AssetRequest;
 import com.cnet.asm.emulator.repository.DeviceRepository;
 import com.cnet.asm.emulator.repository.PDURepository;
+import com.mysql.jdbc.StringUtils;
 
 
 @Component
@@ -39,13 +40,13 @@ public class AssetManagementService {
 	}
 	
 	private Iterable<Device> saveDeviceData(AssetRequest assetRequest, PDURequest pduRequest) {
-		List<String> ipList = getIPAddressList("", assetRequest.getQty());
+		List<String> ipList = getIPAddressList(assetRequest.getIpStart(), assetRequest.getQty());
 		List<Device> deviceList = new ArrayList<>();
 		IntStream.range(1, assetRequest.getQty()).forEach(
 				index -> {
 					Device device = new Device();
 					device.setDeviceType(assetRequest.getDeviceType());
-					device.setDomain("cnet.com");
+					device.setDomain(assetRequest.getDomain());
 					device.setIpAddress(ipList.get(index));
 					device.setMacAddress(randomMACAddress());
 					device.setMfrName(assetRequest.getDeviceType());
@@ -81,6 +82,9 @@ public class AssetManagementService {
 	}
 
 	private List<String> getIPAddressList(String ipStart, int qty) {
+		if(StringUtils.isNullOrEmpty(ipStart)) {
+			new Exception("IP range missing");
+		}
 		StringJoiner joiner = new StringJoiner(",");
 		String[] ipOcts = ipStart.split(".");
 		joiner.add(ipOcts[0]).add(ipOcts[1]).add(ipOcts[2]);

@@ -11,6 +11,13 @@ public class AssetRequest {
 	private String modelNumber;
 	
 	private int qty;
+	
+	private String ipStart;
+	
+	private String domain;
+	
+	private String mfrName;
+
 
 	public String getPduNumber() {
 		return pduNumber;
@@ -50,6 +57,30 @@ public class AssetRequest {
 
 	public void setQty(int qty) {
 		this.qty = qty;
+	}
+
+	public String getIpStart() {
+		return ipStart;
+	}
+
+	public void setIpStart(String ipStart) {
+		this.ipStart = ipStart;
+	}
+
+	public String getDomain() {
+		return domain;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+
+	public String getMfrName() {
+		return mfrName;
+	}
+
+	public void setMfrName(String mfrName) {
+		this.mfrName = mfrName;
 	}
 	
 	

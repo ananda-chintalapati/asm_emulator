@@ -21,10 +21,41 @@ public class AssetManagementResource {
 	AssetManagementService asmService;
 	
 	@POST
-	@Path("/pdu")
-	public void saveNewASMRequest(AssetRequest assetRequest) {
+	@Path("/scan")
+	public List<Device> scanDevices(AssetRequest assetRequest) {
 		asmService.saveAssetDetails(assetRequest);
+		return asmService.getDeviceList(assetRequest.getReqNumber());
 	}
+	
+	
+	@POST
+	@Path("/pdu")
+	public List<Device> pduScan(AssetRequest assetRequest) {
+		asmService.saveAssetDetails(assetRequest);
+		return asmService.getDeviceList(assetRequest.getReqNumber());
+	}
+	
+	@POST
+	@Path("/network")
+	public List<Device> addNetworkDetails(AssetRequest assetRequest) {
+		asmService.saveAssetDetails(assetRequest);
+		return asmService.getDeviceList(assetRequest.getReqNumber());
+	}
+	
+	@POST
+	@Path("/ilomcheck")
+	public List<Device> checkPing(AssetRequest assetRequest) {
+		asmService.saveAssetDetails(assetRequest);
+		return asmService.getDeviceList(assetRequest.getReqNumber());
+	}
+	
+	@POST
+	@Path("/bootstrap")
+	public List<Device> bootstrapDevice(AssetRequest assetRequest) {
+		asmService.saveAssetDetails(assetRequest);
+		return asmService.getDeviceList(assetRequest.getReqNumber());
+	}
+	
 	
 	@GET
 	@Path("/{reqNumber}")
