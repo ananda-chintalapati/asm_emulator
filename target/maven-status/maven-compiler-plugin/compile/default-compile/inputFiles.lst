@@ -1,9 +1,0 @@
-/Users/sneha/workspace/asm-emulator/src/main/java/com/cnet/asm/emulator/entity/Device.java
-/Users/sneha/workspace/asm-emulator/src/main/java/com/cnet/asm/emulator/repository/DeviceRepository.java
-/Users/sneha/workspace/asm-emulator/src/main/java/com/cnet/asm/emulator/resource/AssetManagementResource.java
-/Users/sneha/workspace/asm-emulator/src/main/java/com/cnet/asm/emulator/application/ASMJerseyConfig.java
-/Users/sneha/workspace/asm-emulator/src/main/java/com/cnet/asm/emulator/service/AssetManagementService.java
-/Users/sneha/workspace/asm-emulator/src/main/java/com/cnet/asm/emulator/entity/PDURequest.java
-/Users/sneha/workspace/asm-emulator/src/main/java/com/cnet/asm/emulator/model/AssetRequest.java
-/Users/sneha/workspace/asm-emulator/src/main/java/com/cnet/asm/emulator/application/ASMEmulatorApplication.java
-/Users/sneha/workspace/asm-emulator/src/main/java/com/cnet/asm/emulator/repository/PDURepository.java
