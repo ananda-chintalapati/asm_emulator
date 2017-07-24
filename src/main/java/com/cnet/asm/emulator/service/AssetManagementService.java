@@ -4,22 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.StringJoiner;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cnet.asm.emulator.entity.Device;
 import com.cnet.asm.emulator.entity.PDURequest;
-import com.cnet.asm.emulator.model.AssetRequest;
+import com.cnet.asm.emulator.model.DeviceInfo;
+import com.cnet.asm.emulator.model.NetworkInfo;
+import com.cnet.asm.emulator.model.Request;
 import com.cnet.asm.emulator.repository.DeviceRepository;
 import com.cnet.asm.emulator.repository.PDURepository;
 import com.mysql.jdbc.StringUtils;
 
 
 @Component
+@Transactional
 public class AssetManagementService {
 	
 	@Autowired
@@ -28,38 +32,70 @@ public class AssetManagementService {
 	@Autowired
 	PDURepository pduRepository;
 
-	public void saveAssetDetails(AssetRequest assetRequest) {
-		PDURequest pduRequest = savePduRequest(assetRequest.getPduNumber(),
+	@Transactional
+	public Iterable<Device> saveAssetDetails(Request assetRequest) {
+		savePduRequest(assetRequest.getPduNumber(),
 											  assetRequest.getReqNumber());
-		saveDeviceData(assetRequest, pduRequest);
+		persistDeviceData(assetRequest);
+		return getDeviceList(assetRequest.getReqNumber());
 	}
 	
 	public List<Device> getDeviceList(String reqNumber) {
+		PDURequest pduRequest = new PDURequest();
+		pduRequest.setReqNumber(reqNumber);
 		List<Device> deviceList = deviceRepository.findByReqNumber(reqNumber);
 		return deviceList;
 	}
 	
-	private Iterable<Device> saveDeviceData(AssetRequest assetRequest, PDURequest pduRequest) {
-		List<String> ipList = getIPAddressList(assetRequest.getIpStart(), assetRequest.getQty());
+	private void persistDeviceData(Request assetRequest) {
+		saveDeviceData(assetRequest.getChasisInfo(), assetRequest.getReqNumber(), assetRequest.getCtaskNumber());
+		saveDeviceData(assetRequest.getRouterInfo(), assetRequest.getReqNumber(), assetRequest.getCtaskNumber());
+		saveDeviceData(assetRequest.getServerInfo(), assetRequest.getReqNumber(), assetRequest.getCtaskNumber());
+		saveDeviceData(assetRequest.getSwitchInfo(), assetRequest.getReqNumber(), assetRequest.getCtaskNumber());
+	}
+	
+	public Iterable<Device> savePDUData(Request assetRequest) {
+		saveDeviceData(assetRequest.getPduInfo(), assetRequest.getReqNumber(),
+					   assetRequest.getCtaskNumber());
+		return getDeviceList(assetRequest.getReqNumber());
+	}
+	
+	private Iterable<Device> saveDeviceData(DeviceInfo deviceInfo, String reqNumber, String cTaskNumber) {
+		System.out.println("Device Info " + deviceInfo.toString());
 		List<Device> deviceList = new ArrayList<>();
-		IntStream.range(1, assetRequest.getQty()).forEach(
+		IntStream.range(0, deviceInfo.getQty()).forEach(
 				index -> {
 					Device device = new Device();
-					device.setDeviceType(assetRequest.getDeviceType());
-					device.setDomain(assetRequest.getDomain());
-					device.setIpAddress(ipList.get(index));
+					device.setDeviceType(deviceInfo.getDeviceType());
 					device.setMacAddress(randomMACAddress());
-					device.setMfrName(assetRequest.getDeviceType());
-					device.setModelNumber(assetRequest.getModelNumber());
+					device.setMfrName(deviceInfo.getDeviceType());
+					device.setModelNumber(deviceInfo.getModelNumber());
 					device.setSerialNumber(UUID.randomUUID().toString());
 					device.setStatus("OK");
-					device.setPduRequestEntity(pduRequest);
+					//device.setPduRequestEntity(pduRequest);
+					device.setReqNumber(reqNumber);
+					device.setcTaskNumber(cTaskNumber);
 					deviceList.add(device);
 				});
 		return deviceRepository.save(deviceList);
 	}
 	
+	@Transactional
+	public Iterable<Device> saveNetworkDetails(Request assetRequest) {
+		List<Device> deviceList = getDeviceList(assetRequest.getReqNumber());
+		NetworkInfo networkInfo = assetRequest.getNetworkInfo();
+		String[] ipRange = networkInfo.getIpRange().split("\\-");
+		List<String> ipList = getIPAddressList(ipRange[0], ipRange[1], 0);
+		for(Device device:deviceList) {
+			device.setDomain(networkInfo.getDomain());
+			device.setIpAddress(ipList.get(deviceList.indexOf(device)));
+		}
+		deviceRepository.save(deviceList);
+		return getDeviceList(assetRequest.getReqNumber());
+	}
+	
 	private PDURequest savePduRequest(String pduNumber, String reqNumber) {
+		System.out.println("Req Number : "+ reqNumber);
 		PDURequest pduRequest = new PDURequest();
 		pduRequest.setPduLocation("");
 		pduRequest.setPduNumber(pduNumber);
@@ -81,20 +117,25 @@ public class AssetManagementService {
 	    return sb.toString();
 	}
 
-	private List<String> getIPAddressList(String ipStart, int qty) {
+	private List<String> getIPAddressList(String ipStart, String ipEnd, int qty) {
 		if(StringUtils.isNullOrEmpty(ipStart)) {
 			new Exception("IP range missing");
 		}
-		StringJoiner joiner = new StringJoiner(",");
-		String[] ipOcts = ipStart.split(".");
-		joiner.add(ipOcts[0]).add(ipOcts[1]).add(ipOcts[2]);
-		int lastIP = getLastIssuedIPAddress(joiner.toString());
+		StringJoiner joiner = new StringJoiner(".");
+		String[] ipStartOcts = ipStart.split("\\.");
+		joiner.add(ipStartOcts[0]).add(ipStartOcts[1]).add(ipStartOcts[2]);
+		if(!StringUtils.isNullOrEmpty(ipEnd)) {
+			String[] ipEndOcts = ipEnd.split("\\.");
+			qty = Integer.parseInt(ipEndOcts[3]) - Integer.parseInt(ipStartOcts[3]);
+		}
+		String baseIP = joiner.toString();
+		int lastIP = getLastIssuedIPAddress(baseIP);
 		if(lastIP + qty > 254) {
 			new Exception("Not enough IP addresses are available");
 		}
 		List<String> ipList = new ArrayList<>();
-		IntStream.range(1, qty).forEach(
-				index -> ipList.add(joiner.add(lastIP+index+"").toString()));
+		IntStream.range(0, qty).forEach(
+				index -> ipList.add(baseIP + "." + (lastIP+index)));
 		return ipList;
 	}
 	

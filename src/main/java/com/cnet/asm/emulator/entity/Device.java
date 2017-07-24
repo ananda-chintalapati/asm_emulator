@@ -5,8 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -15,7 +13,7 @@ public class Device {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private int id;
 	
 	@Column(name="MFR_NAME")
 	private String mfrName;
@@ -41,16 +39,23 @@ public class Device {
 	@Column(name="STATUS")
 	private String status;
 	
-	@ManyToOne
-	@JoinColumn(name="REQ_NUMBER", referencedColumnName="REQ_NUMBER")
-	private PDURequest pduRequestEntity;
+	@Column(name="CTASK_NUMBER")
+	private String cTaskNumber;
+	
+//	@ManyToOne(fetch = FetchType.EAGER)
+//	@JoinColumn(name="REQ_NUMBER")
+//	@JsonIgnoreProperties("deviceEntity")
+//	private PDURequest pduRequest;
+	
+	@Column(name="REQ_NUMBER")
+	private String reqNumber;
 	
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -118,13 +123,29 @@ public class Device {
 		this.status = status;
 	}
 
-	public PDURequest getPduRequestEntity() {
-		return pduRequestEntity;
+	public String getReqNumber() {
+		return reqNumber;
 	}
 
-	public void setPduRequestEntity(PDURequest pduRequestEntity) {
-		this.pduRequestEntity = pduRequestEntity;
+	public void setReqNumber(String reqNumber) {
+		this.reqNumber = reqNumber;
 	}
+
+	public String getcTaskNumber() {
+		return cTaskNumber;
+	}
+
+	public void setcTaskNumber(String cTaskNumber) {
+		this.cTaskNumber = cTaskNumber;
+	}
+
+//	public PDURequest getPduRequestEntity() {
+//		return pduRequest;
+//	}
+//
+//	public void setPduRequestEntity(PDURequest pduRequestEntity) {
+//		this.pduRequest = pduRequestEntity;
+//	}
 	
 	
 	

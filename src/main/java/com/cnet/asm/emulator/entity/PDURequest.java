@@ -1,15 +1,8 @@
 package com.cnet.asm.emulator.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -26,9 +19,9 @@ public class PDURequest {
 	@Column(name="PDU_LOCATION")
 	private String pduLocation;
 	
-	@OneToMany(orphanRemoval = true, cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-	@JoinColumn(name = "reqNumber", nullable = false)
-	private List<Device> deviceEntity = new ArrayList<>();
+//	@OneToMany(mappedBy = "pduRequest", orphanRemoval = true, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+//	@JsonIgnoreProperties("pduRequestEntity")
+//	private Set<Device> deviceEntity;
 	
 
 	public String getReqNumber() {
@@ -55,13 +48,13 @@ public class PDURequest {
 		this.pduLocation = pduLocation;
 	}
 
-	public List<Device> getDeviceEntity() {
-		return deviceEntity;
-	}
-
-	public void setDeviceEntity(List<Device> deviceEntity) {
-		this.deviceEntity = deviceEntity;
-	}
+//	public Set<Device> getDeviceEntity() {
+//		return deviceEntity;
+//	}
+//
+//	public void setDeviceEntity(Set<Device> deviceEntity) {
+//		this.deviceEntity = deviceEntity;
+//	}
 	
 	
 	

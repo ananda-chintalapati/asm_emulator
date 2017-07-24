@@ -30,6 +30,11 @@
 		  <groupId>org.springframework.boot</groupId>
 		  <artifactId>spring-boot-starter-undertow</artifactId>
 		</dependency>
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		    <version>1.2</version>
+		</dependency>
 		        <!-- exclude tomcat-jdbc, Spring Boot will use HikariCP automatically  -->
         <dependency>
             <groupId>com.zaxxer</groupId>

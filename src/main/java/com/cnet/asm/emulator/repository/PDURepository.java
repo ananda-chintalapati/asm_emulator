@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.cnet.asm.emulator.entity.PDURequest;
 
-public interface PDURepository extends CrudRepository<PDURequest, Long>  {
+public interface PDURepository extends CrudRepository<PDURequest, String>  {
 
 }

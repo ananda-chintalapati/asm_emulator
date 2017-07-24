@@ -1,4 +1,4 @@
-package com.cnet.asm.emulator.application;
+package com.cnet.asm.emulator.resource;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.ext.ContextResolver;
@@ -8,6 +8,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cnet.asm.emulator.client.ServiceNowClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
@@ -18,6 +19,8 @@ public class ASMJerseyConfig extends ResourceConfig {
 	public ASMJerseyConfig(ObjectMapper objectMapper) {
 		// register endpoints
 		packages("com.cnet.asm.emulator");
+		register(AssetManagementResource.class);
+		register(ServiceNowClient.class);
 		// register jackson for json
 		register(new ObjectMapperContextResolver(objectMapper));
 	}

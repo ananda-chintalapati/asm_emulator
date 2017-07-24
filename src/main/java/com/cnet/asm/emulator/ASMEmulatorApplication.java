@@ -1,4 +1,4 @@
-package com.cnet.asm.emulator.application;
+package com.cnet.asm.emulator;
 
 import javax.sql.DataSource;
 
