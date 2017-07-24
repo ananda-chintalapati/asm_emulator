@@ -18,7 +18,7 @@ public class ASMJerseyConfig extends ResourceConfig {
 	@Autowired
 	public ASMJerseyConfig(ObjectMapper objectMapper) {
 		// register endpoints
-		packages("com.cnet.asm.emulator");
+		//packages("com.cnet.asm.emulator");
 		register(AssetManagementResource.class);
 		register(ServiceNowClient.class);
 		// register jackson for json

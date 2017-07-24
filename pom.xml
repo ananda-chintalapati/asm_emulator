@@ -66,6 +66,26 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				    <configuration>
+				        <requiresUnpack>
+				                <dependency>
+				                        <groupId>com.sun.jersey</groupId>
+				                        <artifactId>jersey-server</artifactId>
+				                </dependency>
+				                <dependency>
+				                        <groupId>com.sun.jersey</groupId>
+				                        <artifactId>jersey-core</artifactId>
+				                </dependency>
+				                <dependency>
+				                        <groupId>com.sun.jersey</groupId>
+				                        <artifactId>jersey-servlet</artifactId>
+				                </dependency>
+				                <dependency>
+			                        <groupId>org.jruby</groupId>
+			                        <artifactId>jruby-complete</artifactId>
+			                    </dependency>
+				        </requiresUnpack>
+				    </configuration>
 			</plugin>
 		</plugins>
 	</build>
